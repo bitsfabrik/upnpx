@@ -148,6 +148,13 @@ static NSString *ElementStop = @"ElementStop";
 
 -(int)parseFromData:(NSData*)data{
     @autoreleasepool {
+        if (data != nil) {
+            NSString *xml = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            NSError *error = NULL;
+            NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"^\\s*$\\r?\\n" options:NSRegularExpressionAnchorsMatchLines error:&error];
+            xml = [regex stringByReplacingMatchesInString:xml options:0 range:NSMakeRange(0, [xml length]) withTemplate:@""];
+            data = [xml dataUsingEncoding:NSUTF8StringEncoding];
+        }
         NSXMLParser *parser = [[NSXMLParser alloc] initWithData:data];
         int ret = [self startParser:parser];
         [parser release];
@@ -161,10 +168,16 @@ static NSString *ElementStop = @"ElementStop";
         //http://blog.filipekberg.se/2010/11/30/nsxmlparser-has-memory-leaks-in-ios-4/
         [[NSURLCache sharedURLCache] setMemoryCapacity:0];
         [[NSURLCache sharedURLCache] setDiskCapacity:0];
-
-        NSData *xml = [NSData dataWithContentsOfURL:url];
-        NSXMLParser *parser = [[NSXMLParser alloc] initWithData:xml];;
-
+        
+        NSData *data = [NSData dataWithContentsOfURL:url];
+        if (data != nil) {
+            NSString *xml = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            NSError *error = NULL;
+            NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"^\\s*$\\r?\\n" options:NSRegularExpressionAnchorsMatchLines error:&error];
+            xml = [regex stringByReplacingMatchesInString:xml options:0 range:NSMakeRange(0, [xml length]) withTemplate:@""];
+            data = [xml dataUsingEncoding:NSUTF8StringEncoding];
+        }
+        NSXMLParser *parser = [[NSXMLParser alloc] initWithData:data];
         int ret = [self startParser:parser];
         [parser release];
         return ret;
