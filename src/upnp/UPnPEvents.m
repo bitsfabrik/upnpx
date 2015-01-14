@@ -156,9 +156,11 @@
 }
 
 -(void)UnSubscribe:(NSString*)uuid{
-    [mMutex lock];
-    [mEventSubscribers removeObjectForKey:uuid];
-    [mMutex unlock];
+    if (uuid != nil) {
+        [mMutex lock];
+        [mEventSubscribers removeObjectForKey:uuid];
+        [mMutex unlock];
+    }
 }
 
 
