@@ -172,10 +172,12 @@ static NSString *ElementStop = @"ElementStop";
         NSData *data = [NSData dataWithContentsOfURL:url];
         if (data != nil) {
             NSString *xml = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            NSError *error = NULL;
-            NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"^\\s*$\\r?\\n" options:NSRegularExpressionAnchorsMatchLines error:&error];
-            xml = [regex stringByReplacingMatchesInString:xml options:0 range:NSMakeRange(0, [xml length]) withTemplate:@""];
-            data = [xml dataUsingEncoding:NSUTF8StringEncoding];
+            if (xml != nil) {
+                NSError *error = NULL;
+                NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"^\\s*$\\r?\\n" options:NSRegularExpressionAnchorsMatchLines error:&error];
+                xml = [regex stringByReplacingMatchesInString:xml options:0 range:NSMakeRange(0, [xml length]) withTemplate:@""];
+                data = [xml dataUsingEncoding:NSUTF8StringEncoding];
+            }
         }
         NSXMLParser *parser = [[NSXMLParser alloc] initWithData:data];
         int ret = [self startParser:parser];
